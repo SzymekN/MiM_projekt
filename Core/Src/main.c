@@ -59,8 +59,27 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void send_temp(float temp){
 
+
+// formatowanie danych i przesyłanie do wyświelacza
+// temp - temperatura pobrana z czujnika
+// txt - tekst dopisywany przed wyświetleniem temperatury
+void send_temp(float temp, char* txt){
+      static char celsius[3] = {(char)223, 'C', '\0'};
+
+	  char temp_ch[8] = "";
+	  char result[16];
+
+	  // rzutowanie float na char*
+      gcvt(temp,4,temp_ch);
+
+      // łączenie zmiennych w jedną tablicę
+	  strcat(temp_ch,celsius);
+	  strcpy(result, txt);
+	  strcat(result, temp_ch);
+
+	  // wyświetlanie tekstu na hd44780
+	  lcd_puts(result);
 }
 /* USER CODE END 0 */
 
@@ -103,53 +122,45 @@ int main(void)
 
   uint8_t ds1[DS18B20_ROM_CODE_SIZE];
 
+  // sprawdzanie komunikacji z czujnikiem
   if (ds18b20_read_address(ds1) != HAL_OK) {
     Error_Handler();
   }
 
-  lcd_init();
-  char temp_ch[8] = "";
-  char celsius[3];
-  char result[16];
-  celsius[0] = (char)223;
-  celsius[1] = 'C';
-  celsius[2] = '\0';
-  unsigned int i = 1;
-  float sum = 0;
+  lcd_init();	// inicjalizacja lcd
+
+  unsigned int i = 1;	// iterator do zliczania średniej
+  float sum = 0;		// suma wszystkich temperatur
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  ds18b20_start_measure(NULL);
+	  ds18b20_start_measure(); // start pomiaru
 
-	  HAL_Delay(750);
+	  HAL_Delay(750);	// czekanie na wykonanie pomiaru
 	  lcd_gotoxy(0,0);
-	  strcpy(temp_ch, "Temp: ");
-	  float temp = ds18b20_get_temp(NULL);
-	    if (temp >= 80.0f)
+
+	  float temp = ds18b20_get_temp();
+
+	    if (temp >= 80.0f)	// w przypadku zwrócenia wartości domyślnej wświetl błąd
 	      lcd_puts("Error");
+
 	    else{
-	      gcvt(temp,4,temp_ch);
+
 		  lcd_clr();
-		  strcat(temp_ch,celsius);
-		  strcpy(result, "Temp: ");
-		  strcat(result, temp_ch);
-		  lcd_puts(result);
+	      send_temp(temp, "Temp: "); //formatowanie i wysyłanie temperatry do wyświetlacza
+
 		  sum += temp;
-		  gcvt(sum,10,temp_ch);
-		  strcat(temp_ch,"\r\n");
-		  HAL_UART_Transmit(&huart2,temp_ch,14,100);
-		  gcvt(sum/i,4,temp_ch);
 		  lcd_gotoxy(0,1);
-		  strcat(temp_ch,celsius);
-		  strcpy(result,"Avg:  ");
-		  strcat(result, temp_ch);
-		  lcd_puts(result);
+		  send_temp(sum/i, "Avg:  "); // wysyłanie policzonej średniej
 		  i++;
+
 	    }
-	    HAL_Delay(1000);
+
+	    HAL_Delay(250); //dokonywanie pomiaru co sekundę (750ms czas pomiaru, 250 czekanie)
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
