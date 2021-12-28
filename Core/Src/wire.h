@@ -10,29 +10,26 @@
 
 #include "stm32f3xx.h"
 
-// Inicjalizacja 1-wire
-// Start licznika używanego do opóźnień
-// return - HAL_OK/HAL_ERROR zależnie od stanu licznika
-HAL_StatusTypeDef wire_init(void);
-
-// Przesłanie sekwencji reset przez 1-wire
-// return - HAL_OK/HAL_ERROR zależnie od odp. czujnika
+/*Funkcja przesyła sekwencję reset przez 1-wire.
+@return Zwraca HAL_OK/HAL_ERROR w zależności od odpowiedzi czujnika
+*/
 HAL_StatusTypeDef wire_reset(void);
 
-// Odczytanie danych przez 1-wire
-// Czyta 8 bitów i połącz w bajt
-// return - odczytany bajt
+/* Funkcja odczytuje dane przez 1-wire (odczytuje 8 bitów i łaczy w bajt)
+@return Zwraca odczytany bajt
+*/
 uint8_t wire_read(void);
 
-// Wyślij dane przez 1-wire
-// byte - bajt do wysłania
+/* Funkcja ta wysyła dane przez 1-wire.
+ @param byte - bajt do wysłania
+ */
 void wire_write(uint8_t byte);
 
-// Policz sumę kontrolną
-// data - blok danych
-// len - długość bloku danych
+/*Funkcja liczy sumę kontrolną
+@param data - blok danych
+@param len - długość bloku danych
+@return Zwraca sumę kontrolną
+*/
 uint8_t wire_crc(const uint8_t* data, int len);
-
-
 
 #endif /* SRC_WIRE_H_ */
