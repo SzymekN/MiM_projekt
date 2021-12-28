@@ -59,7 +59,9 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void send_temp(float temp){
 
+}
 /* USER CODE END 0 */
 
 /**
@@ -106,14 +108,14 @@ int main(void)
   }
 
   lcd_init();
-  lcd_gotoxy(0,0);
-  lcd_puts("Hello");
-  HAL_Delay(2000);
   char temp_ch[8] = "";
-  char celsius[2];
+  char celsius[3];
+  char result[16];
   celsius[0] = (char)223;
   celsius[1] = 'C';
-  char* result;
+  celsius[2] = '\0';
+  unsigned int i = 1;
+  float sum = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -124,7 +126,7 @@ int main(void)
 
 	  HAL_Delay(750);
 	  lcd_gotoxy(0,0);
-	  strcpy(temp_ch, "");
+	  strcpy(temp_ch, "Temp: ");
 	  float temp = ds18b20_get_temp(NULL);
 	    if (temp >= 80.0f)
 	      lcd_puts("Error");
@@ -132,7 +134,20 @@ int main(void)
 	      gcvt(temp,4,temp_ch);
 		  lcd_clr();
 		  strcat(temp_ch,celsius);
-	      lcd_puts(temp_ch);
+		  strcpy(result, "Temp: ");
+		  strcat(result, temp_ch);
+		  lcd_puts(result);
+		  sum += temp;
+		  gcvt(sum,10,temp_ch);
+		  strcat(temp_ch,"\r\n");
+		  HAL_UART_Transmit(&huart2,temp_ch,14,100);
+		  gcvt(sum/i,4,temp_ch);
+		  lcd_gotoxy(0,1);
+		  strcat(temp_ch,celsius);
+		  strcpy(result,"Avg:  ");
+		  strcat(result, temp_ch);
+		  lcd_puts(result);
+		  i++;
 	    }
 	    HAL_Delay(1000);
     /* USER CODE END WHILE */
