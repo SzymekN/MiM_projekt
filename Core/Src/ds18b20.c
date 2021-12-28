@@ -19,10 +19,10 @@
 #define DS18B20_CONVERT_T          0x44
 #define DS18B20_READ_SCRATCHPAD    0xBE
 
-HAL_StatusTypeDef ds18b20_init(void)
-{
-  return wire_init();
-}
+//HAL_StatusTypeDef ds18b20_init(void)
+//{
+//  return wire_init();
+//}
 
 HAL_StatusTypeDef ds18b20_read_address(uint8_t* rom_code)
 {

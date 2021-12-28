@@ -6,10 +6,10 @@
  */
 
 
+#include "usart.h"
 #include "wire.h"
-#include "stm32f3xx_hal_uart_ex.h"
-
-UART_HandleTypeDef huart3;
+#include "gpio.h"
+//#include "tim.h"
 
 static void set_baudrate(uint32_t baudrate)
 {
@@ -31,10 +31,10 @@ static void set_baudrate(uint32_t baudrate)
   }
 }
 
-HAL_StatusTypeDef wire_init(void)
-{
-  return HAL_TIM_Base_Start(&htim6);
-}
+//HAL_StatusTypeDef wire_init(void)
+//{
+//  return HAL_TIM_Base_Start(&htim6);
+//}
 
 
 HAL_StatusTypeDef wire_reset(void)

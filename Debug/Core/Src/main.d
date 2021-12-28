@@ -24,9 +24,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_i2c_ex.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h \
+ ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h \
+ ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart_ex.h \
- ../Core/Inc/lcd_1602.h ../Core/Inc/main.h ../Core/Src/ds18b20.h
+ ../Core/Inc/tim.h ../Core/Inc/main.h ../Core/Inc/usart.h \
+ ../Core/Inc/gpio.h ../Core/Inc/lcd_1602.h ../Core/Src/ds18b20.h
 
 ../Core/Inc/main.h:
 
@@ -80,12 +83,22 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h:
 
+../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h:
+
+../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h:
+
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h:
 
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart_ex.h:
 
-../Core/Inc/lcd_1602.h:
+../Core/Inc/tim.h:
 
 ../Core/Inc/main.h:
+
+../Core/Inc/usart.h:
+
+../Core/Inc/gpio.h:
+
+../Core/Inc/lcd_1602.h:
 
 ../Core/Src/ds18b20.h:
