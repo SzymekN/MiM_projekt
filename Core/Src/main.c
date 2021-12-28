@@ -79,7 +79,7 @@ void send_temp(float temp, char* txt){
 	  strcat(result, temp_ch);
 
 	  // wyświetlanie tekstu na hd44780
-	  lcd_puts(result);
+	  lcd_print(result);
 }
 /* USER CODE END 0 */
 
@@ -140,26 +140,26 @@ int main(void)
 	  ds18b20_start_measure(); // start pomiaru
 
 	  HAL_Delay(750);	// czekanie na wykonanie pomiaru
-	  lcd_gotoxy(0,0);
+	  lcd_move_cursor(0,0);
 
 	  float temp = ds18b20_get_temp();
 
 	    if (temp >= 80.0f)	// w przypadku zwrócenia wartości domyślnej wświetl błąd
-	      lcd_puts("Error");
+	      lcd_print("Error");
 
 	    else{
 
-		  lcd_clr();
+		  lcd_clear();
 	      send_temp(temp, "Temp: "); //formatowanie i wysyłanie temperatry do wyświetlacza
 
 		  sum += temp;
-		  lcd_gotoxy(0,1);
+		  lcd_move_cursor(0,1);
 		  send_temp(sum/i, "Avg:  "); // wysyłanie policzonej średniej
 		  i++;
 
 	    }
 
-	    HAL_Delay(250); //dokonywanie pomiaru co sekundę (750ms czas pomiaru, 250 czekanie)
+	    HAL_Delay(1250); //dokonywanie pomiaru co sekundę (750ms czas pomiaru, 250 czekanie)
 
     /* USER CODE END WHILE */
 

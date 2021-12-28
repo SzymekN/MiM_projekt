@@ -28,7 +28,7 @@ Core/Src/lcd_1602.o: ../Core/Src/lcd_1602.c ../Core/Inc/lcd_1602.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart_ex.h \
- ../Core/Inc/main.h
+ ../Core/Inc/main.h ../Core/Inc/tim.h
 
 ../Core/Inc/lcd_1602.h:
 
@@ -91,3 +91,5 @@ Core/Src/lcd_1602.o: ../Core/Src/lcd_1602.c ../Core/Inc/lcd_1602.h \
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart_ex.h:
 
 ../Core/Inc/main.h:
+
+../Core/Inc/tim.h:

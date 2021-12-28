@@ -12,15 +12,30 @@
 #define d6(x)      x?HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin,GPIO_PIN_SET):HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin,GPIO_PIN_RESET)
 #define d7(x)      x?HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin,GPIO_PIN_SET):HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin,GPIO_PIN_RESET)
 
-//#define bl(x)      x?HAL_GPIO_WritePin(BL_GPIO_Port,BL_Pin,GPIO_PIN_SET):HAL_GPIO_WritePin(BL_GPIO_Port,BL_Pin,GPIO_PIN_RESET)
-
+// prześlij 4 bity danych do wyświetlacza
+// data - dane do przesłania
 static void lcd_send_4bit(uint8_t data);
+
+// prześlij 8 bitów danych do wyświetlacza
+// rs - komendy / manipulacja danymi
+// data - dane do przesłania
 static void lcd_send(int8_t rs,uint8_t data);
-void lcd_cmd(uint8_t command);
-void lcd_data(char c);
+//void lcd_cmd(uint8_t command);
+//void lcd_data(char c);
+
+// inicjalizuj wyświetlacz
 void lcd_init(void);
-void lcd_clr(void);
-void lcd_gotoxy(char x, char y);
-void lcd_puts(char *text);
+
+// wyczyść wyświetlacz
+void lcd_clear(void);
+
+// przesuń kursor
+// x - pozycja horyzontalna kursora
+// y - pozycja wertykalna kursora
+void lcd_move_cursor(char x, char y);
+
+// wyświetl tekst
+// text - tekst do wyświetlenia
+void lcd_print(char *text);
 
 #endif
