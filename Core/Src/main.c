@@ -127,6 +127,7 @@ int main(void)
     Error_Handler();
   }
 
+  HAL_TIM_Base_Start(&htim6);
   lcd_init();	// inicjalizacja lcd
 
   unsigned int i = 1;	// iterator do zliczania średniej
@@ -137,6 +138,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  HAL_TIM_Base_Start(&htim6);
 	  ds18b20_start_measure(); // start pomiaru
 
 	  HAL_Delay(750);	// czekanie na wykonanie pomiaru
@@ -159,7 +161,7 @@ int main(void)
 
 	    }
 
-	    HAL_Delay(1250); //dokonywanie pomiaru co sekundę (750ms czas pomiaru, 250 czekanie)
+	    HAL_Delay(250); //dokonywanie pomiaru co sekundę (750ms czas pomiaru, 250 czekanie)
 
     /* USER CODE END WHILE */
 

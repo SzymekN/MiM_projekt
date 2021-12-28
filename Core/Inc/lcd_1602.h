@@ -20,8 +20,6 @@ static void lcd_send_4bit(uint8_t data);
 // rs - komendy / manipulacja danymi
 // data - dane do przesłania
 static void lcd_send(int8_t rs,uint8_t data);
-//void lcd_cmd(uint8_t command);
-//void lcd_data(char c);
 
 // inicjalizuj wyświetlacz
 void lcd_init(void);

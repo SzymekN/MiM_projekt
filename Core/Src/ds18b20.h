@@ -6,15 +6,15 @@
 
 #define DS18B20_ROM_CODE_SIZE		8  // wielkość tablicy przechowującej adres czujnika
 
-// Odczytaj adres czujnika i policz CRC
+// Odczytywanie adresu czujnika, obliczenie sumy kontrolnej
 // return - HAL_OK/HAL_ERROR
 HAL_StatusTypeDef ds18b20_read_address(uint8_t* rom_code);
 
-// Rozpocznij pomiar temperatury
+// Rozpoczęcie pomiaru temperatury
 // return - HAL_OK/HAL_ERROR
 HAL_StatusTypeDef ds18b20_start_measure();
 
-// Pobierz temperaturę
+// Odczytanie temperatury z czujnika
 // return - temperatura w stopniach Celsjusza
 float ds18b20_get_temp();
 

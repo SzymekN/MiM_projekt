@@ -1,15 +1,10 @@
 #include "lcd_1602.h"
 #include "tim.h"
 
-//static void delay_us(uint32_t delay){
-//	delay*=32;
-//	while(delay--);
-//}
-
 void delay_us (uint16_t us)
 {
-	__HAL_TIM_SET_COUNTER(&htim6,0);  // set the counter value a 0
-	while (__HAL_TIM_GET_COUNTER(&htim6) < us);  // wait for the counter to reach the us input in the parameter
+	__HAL_TIM_SET_COUNTER(&htim6,0);  // ustaw timer na 0
+	while (__HAL_TIM_GET_COUNTER(&htim6) < us){	};  // czekaj określoną ilość czasu
 }
 
 static void lcd_send_4bit(uint8_t data){	
@@ -37,40 +32,29 @@ static void lcd_send(int8_t rs,uint8_t data){
 	en(0);
 }
 
-//void lcd_cmd(uint8_t command){
-//	lcd_send(1,command);
-//}
-
-//void lcd_data(char c){
-//	lcd_send(1,(uint8_t)c);
-//}
-
 void lcd_init(void){
 
-	lcd_send(0,0x28); // ustaw tryb 4 bitowy i dwie linie
-//	lcd_send(0,0x33);	//instrukcje o nieznanym przeznaczeniu
-//	lcd_send(0,0x32);
-	lcd_send(0,0x0C); //włącz wyświetlacz
-//  lcd_send(0,0x06);	// ustaw kursor żeby poruszał się w prawo
-	lcd_send(0,0x01); //czyszczenie wyświetlacza
+	lcd_send(0,0x28); // ustaw tryb 4 bitowy i dwie linie do wyświetlania danych
+	lcd_send(0,0x0C); // włącz wyświetlacz
+	lcd_send(0,0x01); // czyszczenie wyświetlacza
+	lcd_send(0,0x02); // ustawienie kursora na początek
 	HAL_Delay(2);
 }
 
 void lcd_clear(void){
-    lcd_send(0,0x01);
+    lcd_send(0,0x01); // czyszczenie wyświetlacza
     HAL_Delay(2);
 }
 
 
 void lcd_move_cursor(char x, char y){
-	
+	// przesunięcie kursora
     lcd_send(0,0x80+x+(y*0x40));
 }
 
 void lcd_print(char *text){
 	// dopóki dane w tablicy istnieją przesyłaj do wyświetlacza
     while(*text){
-//        lcd_data(*text);
         lcd_send(1,(uint8_t)*text);
         text++;
     }
