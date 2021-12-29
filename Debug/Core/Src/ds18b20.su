@@ -1,0 +1,5 @@
+ds18b20.c:17:19:ds18b20_read_address	32	static
+ds18b20.c:39:26:send_cmd	16	static
+ds18b20.c:51:19:ds18b20_start_measure	8	static
+ds18b20.c:56:26:ds18b20_read_scratchpad	32	static
+ds18b20.c:77:7:ds18b20_get_temp	24	static

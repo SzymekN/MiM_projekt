@@ -3,7 +3,7 @@
 
 void delay_us (uint16_t us)
 {
-	__HAL_TIM_SET_COUNTER(&htim6,0);  // ustaw timer na 0
+	__HAL_TIM_SET_COUNTER(&htim6,0);  // ustaw timer11 na 0
 	while (__HAL_TIM_GET_COUNTER(&htim6) < us){	};  // czekaj określoną ilość czasu
 }
 
@@ -35,6 +35,8 @@ static void lcd_send(int8_t rs,uint8_t data){
 void lcd_init(void){
 
 	lcd_send(0,0x28); // ustaw tryb 4 bitowy i dwie linie do wyświetlania danych
+	lcd_send(0,0x33); // inicjalizacja stanu początkowego
+	lcd_send(0,0x32); // wyłączenie mrugania kursora
 	lcd_send(0,0x0C); // włącz wyświetlacz
 	lcd_send(0,0x01); // czyszczenie wyświetlacza
 	lcd_send(0,0x02); // ustawienie kursora na początek

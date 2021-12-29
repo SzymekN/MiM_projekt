@@ -24,7 +24,7 @@ HAL_StatusTypeDef ds18b20_read_address(uint8_t* rom_code)
 
   wire_write(DS18B20_READ_ROM);
 
-  // odczytywanie adresu
+  // odczytywanie adresu czujnika
   for (i = 0; i < DS18B20_ROM_CODE_SIZE; i++)
     rom_code[i] = wire_read();
 
@@ -58,6 +58,7 @@ static HAL_StatusTypeDef ds18b20_read_scratchpad(uint8_t* scratchpad)
   int i;
   uint8_t crc;
 
+  // wysłanie żadania odczytu danych
   if (send_cmd(DS18B20_READ_SCRATCHPAD) != HAL_OK)
     return HAL_ERROR;
 
