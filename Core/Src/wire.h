@@ -1,10 +1,3 @@
-/*
- * wire.h
- *
- *  Created on: 27 gru 2021
- *      Author: Szymek
- */
-
 #ifndef SRC_WIRE_H_
 #define SRC_WIRE_H_
 

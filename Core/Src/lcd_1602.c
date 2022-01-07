@@ -3,7 +3,7 @@
 
 void delay_us (uint16_t us)
 {
-	__HAL_TIM_SET_COUNTER(&htim6,0);  // ustaw timer11 na 0
+	__HAL_TIM_SET_COUNTER(&htim6,0);  // ustaw timer6 na 0
 	while (__HAL_TIM_GET_COUNTER(&htim6) < us){	};  // czekaj określoną ilość czasu
 }
 

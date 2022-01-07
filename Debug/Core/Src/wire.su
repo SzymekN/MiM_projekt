@@ -1,8 +1,8 @@
-wire.c:13:13:set_baudrate	16	static
-wire.c:35:19:wire_reset	16	static
-wire.c:52:12:read_bit	16	static
-wire.c:62:9:wire_read	16	static
-wire.c:74:13:write_bit	24	static
-wire.c:85:6:wire_write	24	static
-wire.c:94:16:byte_crc	24	static
-wire.c:107:9:wire_crc	24	static
+wire.c:5:13:set_baudrate	16	static
+wire.c:27:19:wire_reset	16	static
+wire.c:44:12:read_bit	16	static
+wire.c:54:9:wire_read	16	static
+wire.c:66:13:write_bit	24	static
+wire.c:77:6:wire_write	24	static
+wire.c:86:16:byte_crc	24	static
+wire.c:99:9:wire_crc	24	static

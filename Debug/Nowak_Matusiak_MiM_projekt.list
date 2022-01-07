@@ -1,5 +1,5 @@
 
-lcd.elf:     file format elf32-littlearm
+Nowak_Matusiak_MiM_projekt.elf:     file format elf32-littlearm
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
@@ -39,13 +39,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_macro  00021efa  00000000  00000000  00036018  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   000116b9  00000000  00000000  00057f12  2**0
+ 18 .debug_line   000116b7  00000000  00000000  00057f12  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000c4e7d  00000000  00000000  000695cb  2**0
+ 19 .debug_str    000c4ebd  00000000  00000000  000695c9  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000053  00000000  00000000  0012e448  2**0
+ 20 .comment      00000053  00000000  00000000  0012e486  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  00004724  00000000  00000000  0012e49c  2**2
+ 21 .debug_frame  00004724  00000000  00000000  0012e4dc  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -910,230 +910,150 @@ Disassembly of section .text:
  8000b6a:	bf00      	nop
 
 08000b6c <ds18b20_read_address>:
-#define DS18B20_CONVERT_T          0x44 // inicjalizacja konwersji temperatury
-#define DS18B20_READ_SCRATCHPAD    0xBE // odczyt danych z czujnika
-
-
-HAL_StatusTypeDef ds18b20_read_address(uint8_t* rom_code)
-{
  8000b6c:	b590      	push	{r4, r7, lr}
  8000b6e:	b085      	sub	sp, #20
  8000b70:	af00      	add	r7, sp, #0
  8000b72:	6078      	str	r0, [r7, #4]
-  int i;
-  uint8_t crc;
-
-  if (wire_reset() != HAL_OK)
  8000b74:	f000 fd96 	bl	80016a4 <wire_reset>
  8000b78:	4603      	mov	r3, r0
  8000b7a:	2b00      	cmp	r3, #0
  8000b7c:	d001      	beq.n	8000b82 <ds18b20_read_address+0x16>
-    return HAL_ERROR;
  8000b7e:	2301      	movs	r3, #1
  8000b80:	e021      	b.n	8000bc6 <ds18b20_read_address+0x5a>
-
-  wire_write(DS18B20_READ_ROM);
  8000b82:	2033      	movs	r0, #51	; 0x33
  8000b84:	f000 fe18 	bl	80017b8 <wire_write>
-
-  // odczytywanie adresu czujnika
-  for (i = 0; i < DS18B20_ROM_CODE_SIZE; i++)
  8000b88:	2300      	movs	r3, #0
  8000b8a:	60fb      	str	r3, [r7, #12]
  8000b8c:	e009      	b.n	8000ba2 <ds18b20_read_address+0x36>
-    rom_code[i] = wire_read();
  8000b8e:	68fb      	ldr	r3, [r7, #12]
  8000b90:	687a      	ldr	r2, [r7, #4]
  8000b92:	18d4      	adds	r4, r2, r3
  8000b94:	f000 fdce 	bl	8001734 <wire_read>
  8000b98:	4603      	mov	r3, r0
  8000b9a:	7023      	strb	r3, [r4, #0]
-  for (i = 0; i < DS18B20_ROM_CODE_SIZE; i++)
  8000b9c:	68fb      	ldr	r3, [r7, #12]
  8000b9e:	3301      	adds	r3, #1
  8000ba0:	60fb      	str	r3, [r7, #12]
  8000ba2:	68fb      	ldr	r3, [r7, #12]
  8000ba4:	2b07      	cmp	r3, #7
  8000ba6:	ddf2      	ble.n	8000b8e <ds18b20_read_address+0x22>
-
-  // sprawdzanie sumy kontrolnej
-  crc = wire_crc(rom_code, DS18B20_ROM_CODE_SIZE - 1);
  8000ba8:	2107      	movs	r1, #7
  8000baa:	6878      	ldr	r0, [r7, #4]
  8000bac:	f000 fe4c 	bl	8001848 <wire_crc>
  8000bb0:	4603      	mov	r3, r0
  8000bb2:	72fb      	strb	r3, [r7, #11]
-  if (rom_code[DS18B20_ROM_CODE_SIZE - 1] == crc)
  8000bb4:	687b      	ldr	r3, [r7, #4]
  8000bb6:	3307      	adds	r3, #7
  8000bb8:	781b      	ldrb	r3, [r3, #0]
  8000bba:	7afa      	ldrb	r2, [r7, #11]
  8000bbc:	429a      	cmp	r2, r3
  8000bbe:	d101      	bne.n	8000bc4 <ds18b20_read_address+0x58>
-    return HAL_OK;
  8000bc0:	2300      	movs	r3, #0
  8000bc2:	e000      	b.n	8000bc6 <ds18b20_read_address+0x5a>
-  else
-    return HAL_ERROR;
  8000bc4:	2301      	movs	r3, #1
-}
  8000bc6:	4618      	mov	r0, r3
  8000bc8:	3714      	adds	r7, #20
  8000bca:	46bd      	mov	sp, r7
  8000bcc:	bd90      	pop	{r4, r7, pc}
 
 08000bce <send_cmd>:
-
-static HAL_StatusTypeDef send_cmd(uint8_t cmd)
-{
  8000bce:	b580      	push	{r7, lr}
  8000bd0:	b082      	sub	sp, #8
  8000bd2:	af00      	add	r7, sp, #0
  8000bd4:	4603      	mov	r3, r0
  8000bd6:	71fb      	strb	r3, [r7, #7]
-  if (wire_reset() != HAL_OK)
  8000bd8:	f000 fd64 	bl	80016a4 <wire_reset>
  8000bdc:	4603      	mov	r3, r0
  8000bde:	2b00      	cmp	r3, #0
  8000be0:	d001      	beq.n	8000be6 <send_cmd+0x18>
-    return HAL_ERROR;
  8000be2:	2301      	movs	r3, #1
  8000be4:	e007      	b.n	8000bf6 <send_cmd+0x28>
-
-  // komunikacja z jedynym czujnikiem
-  wire_write(DS18B20_SKIP_ROM);
  8000be6:	20cc      	movs	r0, #204	; 0xcc
  8000be8:	f000 fde6 	bl	80017b8 <wire_write>
-
-  wire_write(cmd);
  8000bec:	79fb      	ldrb	r3, [r7, #7]
  8000bee:	4618      	mov	r0, r3
  8000bf0:	f000 fde2 	bl	80017b8 <wire_write>
-  return HAL_OK;
  8000bf4:	2300      	movs	r3, #0
-}
  8000bf6:	4618      	mov	r0, r3
  8000bf8:	3708      	adds	r7, #8
  8000bfa:	46bd      	mov	sp, r7
  8000bfc:	bd80      	pop	{r7, pc}
 
 08000bfe <ds18b20_start_measure>:
-
-HAL_StatusTypeDef ds18b20_start_measure()
-{
  8000bfe:	b580      	push	{r7, lr}
  8000c00:	af00      	add	r7, sp, #0
-  return send_cmd(DS18B20_CONVERT_T);
  8000c02:	2044      	movs	r0, #68	; 0x44
  8000c04:	f7ff ffe3 	bl	8000bce <send_cmd>
  8000c08:	4603      	mov	r3, r0
-}
  8000c0a:	4618      	mov	r0, r3
  8000c0c:	bd80      	pop	{r7, pc}
 
 08000c0e <ds18b20_read_scratchpad>:
-
-static HAL_StatusTypeDef ds18b20_read_scratchpad(uint8_t* scratchpad)
-{
  8000c0e:	b590      	push	{r4, r7, lr}
  8000c10:	b085      	sub	sp, #20
  8000c12:	af00      	add	r7, sp, #0
  8000c14:	6078      	str	r0, [r7, #4]
-  int i;
-  uint8_t crc;
-
-  // wysÅ‚anie Å¼adania odczytu danych
-  if (send_cmd(DS18B20_READ_SCRATCHPAD) != HAL_OK)
  8000c16:	20be      	movs	r0, #190	; 0xbe
  8000c18:	f7ff ffd9 	bl	8000bce <send_cmd>
  8000c1c:	4603      	mov	r3, r0
  8000c1e:	2b00      	cmp	r3, #0
  8000c20:	d001      	beq.n	8000c26 <ds18b20_read_scratchpad+0x18>
-    return HAL_ERROR;
  8000c22:	2301      	movs	r3, #1
  8000c24:	e01e      	b.n	8000c64 <ds18b20_read_scratchpad+0x56>
-
-  // odczyt danych z czujnika
-  for (i = 0; i < DS18B20_SCRATCHPAD_SIZE; i++)
  8000c26:	2300      	movs	r3, #0
  8000c28:	60fb      	str	r3, [r7, #12]
  8000c2a:	e009      	b.n	8000c40 <ds18b20_read_scratchpad+0x32>
-    scratchpad[i] = wire_read();
  8000c2c:	68fb      	ldr	r3, [r7, #12]
  8000c2e:	687a      	ldr	r2, [r7, #4]
  8000c30:	18d4      	adds	r4, r2, r3
  8000c32:	f000 fd7f 	bl	8001734 <wire_read>
  8000c36:	4603      	mov	r3, r0
  8000c38:	7023      	strb	r3, [r4, #0]
-  for (i = 0; i < DS18B20_SCRATCHPAD_SIZE; i++)
  8000c3a:	68fb      	ldr	r3, [r7, #12]
  8000c3c:	3301      	adds	r3, #1
  8000c3e:	60fb      	str	r3, [r7, #12]
  8000c40:	68fb      	ldr	r3, [r7, #12]
  8000c42:	2b08      	cmp	r3, #8
  8000c44:	ddf2      	ble.n	8000c2c <ds18b20_read_scratchpad+0x1e>
-
-  // sprawdzanie sumy kontrolnej
-  crc = wire_crc(scratchpad, DS18B20_SCRATCHPAD_SIZE - 1);
  8000c46:	2108      	movs	r1, #8
  8000c48:	6878      	ldr	r0, [r7, #4]
  8000c4a:	f000 fdfd 	bl	8001848 <wire_crc>
  8000c4e:	4603      	mov	r3, r0
  8000c50:	72fb      	strb	r3, [r7, #11]
-  if (scratchpad[DS18B20_SCRATCHPAD_SIZE - 1] == crc)
  8000c52:	687b      	ldr	r3, [r7, #4]
  8000c54:	3308      	adds	r3, #8
  8000c56:	781b      	ldrb	r3, [r3, #0]
  8000c58:	7afa      	ldrb	r2, [r7, #11]
  8000c5a:	429a      	cmp	r2, r3
  8000c5c:	d101      	bne.n	8000c62 <ds18b20_read_scratchpad+0x54>
-    return HAL_OK;
  8000c5e:	2300      	movs	r3, #0
  8000c60:	e000      	b.n	8000c64 <ds18b20_read_scratchpad+0x56>
-  else
-    return HAL_ERROR;
  8000c62:	2301      	movs	r3, #1
-}
  8000c64:	4618      	mov	r0, r3
  8000c66:	3714      	adds	r7, #20
  8000c68:	46bd      	mov	sp, r7
  8000c6a:	bd90      	pop	{r4, r7, pc}
 
 08000c6c <ds18b20_get_temp>:
-
-float ds18b20_get_temp()
-{
  8000c6c:	b580      	push	{r7, lr}
  8000c6e:	b084      	sub	sp, #16
  8000c70:	af00      	add	r7, sp, #0
-  uint8_t scratchpad[DS18B20_SCRATCHPAD_SIZE];
-  int16_t temp;
-
-  // jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d zwrÃ³Ä‡ wartoÅ›Ä‡ domyÅ›lnÄ…
-  if (ds18b20_read_scratchpad(scratchpad) != HAL_OK)
  8000c72:	1d3b      	adds	r3, r7, #4
  8000c74:	4618      	mov	r0, r3
  8000c76:	f7ff ffca 	bl	8000c0e <ds18b20_read_scratchpad>
  8000c7a:	4603      	mov	r3, r0
  8000c7c:	2b00      	cmp	r3, #0
  8000c7e:	d002      	beq.n	8000c86 <ds18b20_get_temp+0x1a>
-    return 85.0f;
  8000c80:	ed9f 7a0a 	vldr	s14, [pc, #40]	; 8000cac <ds18b20_get_temp+0x40>
  8000c84:	e00b      	b.n	8000c9e <ds18b20_get_temp+0x32>
  8000c86:	88bb      	ldrh	r3, [r7, #4]
-
-  // kopiowanie pierwszych dwÃ³ch bajtÃ³w
-  memcpy(&temp, &scratchpad[0], sizeof(temp));
  8000c88:	807b      	strh	r3, [r7, #2]
-
-  return temp / 16.0f;
  8000c8a:	f9b7 3002 	ldrsh.w	r3, [r7, #2]
  8000c8e:	ee07 3a90 	vmov	s15, r3
  8000c92:	eef8 7ae7 	vcvt.f32.s32	s15, s15
  8000c96:	eef3 6a00 	vmov.f32	s13, #48	; 0x41800000  16.0
  8000c9a:	ee87 7aa6 	vdiv.f32	s14, s15, s13
  8000c9e:	eef0 7a47 	vmov.f32	s15, s14
-}
  8000ca2:	eeb0 0a67 	vmov.f32	s0, s15
  8000ca6:	3710      	adds	r7, #16
  8000ca8:	46bd      	mov	sp, r7
@@ -1298,7 +1218,7 @@ void delay_us (uint16_t us)
  8000dac:	af00      	add	r7, sp, #0
  8000dae:	4603      	mov	r3, r0
  8000db0:	80fb      	strh	r3, [r7, #6]
-	__HAL_TIM_SET_COUNTER(&htim6,0);  // ustaw timer11 na 0
+	__HAL_TIM_SET_COUNTER(&htim6,0);  // ustaw timer6 na 0
  8000db2:	4b09      	ldr	r3, [pc, #36]	; (8000dd8 <delay_us+0x30>)
  8000db4:	681b      	ldr	r3, [r3, #0]
  8000db6:	2200      	movs	r2, #0
@@ -1480,11 +1400,11 @@ void lcd_init(void){
  8000f00:	2128      	movs	r1, #40	; 0x28
  8000f02:	2000      	movs	r0, #0
  8000f04:	f7ff ffb4 	bl	8000e70 <lcd_send>
-	lcd_send(0,0x33); //instrukcje o nieznanym przeznaczeniu (po kompilacji dziaÅ‚a, ale po ponownym uruchomieniu juÅ¼ nie xddd)
+	lcd_send(0,0x33); // inicjalizacja stanu poczÄ…tkowego
  8000f08:	2133      	movs	r1, #51	; 0x33
  8000f0a:	2000      	movs	r0, #0
  8000f0c:	f7ff ffb0 	bl	8000e70 <lcd_send>
-	lcd_send(0,0x32);
+	lcd_send(0,0x32); // wyÅ‚Ä…czenie mrugania kursora
  8000f10:	2132      	movs	r1, #50	; 0x32
  8000f12:	2000      	movs	r0, #0
  8000f14:	f7ff ffac 	bl	8000e70 <lcd_send>
@@ -2873,73 +2793,49 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
  8001634:	48000400 	.word	0x48000400
 
 08001638 <set_baudrate>:
-#include "usart.h"
-#include "wire.h"
-#include "gpio.h"
-
-static void set_baudrate(uint32_t baudrate)
-{
  8001638:	b580      	push	{r7, lr}
  800163a:	b082      	sub	sp, #8
  800163c:	af00      	add	r7, sp, #0
  800163e:	6078      	str	r0, [r7, #4]
-  huart3.Instance = USART3;
  8001640:	4b16      	ldr	r3, [pc, #88]	; (800169c <set_baudrate+0x64>)
  8001642:	4a17      	ldr	r2, [pc, #92]	; (80016a0 <set_baudrate+0x68>)
  8001644:	601a      	str	r2, [r3, #0]
-  huart3.Init.BaudRate = baudrate;          //ustawienie prêdkoœci z jak¹ ma pracowaæ UART3 za pomoc¹ zmiennej baudrate przekazywanej w argumencie funkcji
  8001646:	4a15      	ldr	r2, [pc, #84]	; (800169c <set_baudrate+0x64>)
  8001648:	687b      	ldr	r3, [r7, #4]
  800164a:	6053      	str	r3, [r2, #4]
-  huart3.Init.WordLength = UART_WORDLENGTH_8B;
  800164c:	4b13      	ldr	r3, [pc, #76]	; (800169c <set_baudrate+0x64>)
  800164e:	2200      	movs	r2, #0
  8001650:	609a      	str	r2, [r3, #8]
-  huart3.Init.StopBits = UART_STOPBITS_1;
  8001652:	4b12      	ldr	r3, [pc, #72]	; (800169c <set_baudrate+0x64>)
  8001654:	2200      	movs	r2, #0
  8001656:	60da      	str	r2, [r3, #12]
-  huart3.Init.Parity = UART_PARITY_NONE;
  8001658:	4b10      	ldr	r3, [pc, #64]	; (800169c <set_baudrate+0x64>)
  800165a:	2200      	movs	r2, #0
  800165c:	611a      	str	r2, [r3, #16]
-  huart3.Init.Mode = UART_MODE_TX_RX;
  800165e:	4b0f      	ldr	r3, [pc, #60]	; (800169c <set_baudrate+0x64>)
  8001660:	220c      	movs	r2, #12
  8001662:	615a      	str	r2, [r3, #20]
-  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
  8001664:	4b0d      	ldr	r3, [pc, #52]	; (800169c <set_baudrate+0x64>)
  8001666:	2200      	movs	r2, #0
  8001668:	619a      	str	r2, [r3, #24]
-  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
  800166a:	4b0c      	ldr	r3, [pc, #48]	; (800169c <set_baudrate+0x64>)
  800166c:	2200      	movs	r2, #0
  800166e:	61da      	str	r2, [r3, #28]
-  huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
  8001670:	4b0a      	ldr	r3, [pc, #40]	; (800169c <set_baudrate+0x64>)
  8001672:	2200      	movs	r2, #0
  8001674:	621a      	str	r2, [r3, #32]
-  huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
  8001676:	4b09      	ldr	r3, [pc, #36]	; (800169c <set_baudrate+0x64>)
  8001678:	2200      	movs	r2, #0
  800167a:	625a      	str	r2, [r3, #36]	; 0x24
-  huart3.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
  800167c:	4b07      	ldr	r3, [pc, #28]	; (800169c <set_baudrate+0x64>)
  800167e:	f44f 5280 	mov.w	r2, #4096	; 0x1000
  8001682:	639a      	str	r2, [r3, #56]	; 0x38
-
-  //sprawdzenie czy otrzymana wartoœæ z funkcji HAL_HalfDuplex_Init zwraca wartoœæ ró¿n¹ od HAL_OK, jeœli tak wyrzucany jest b³¹d, w przeciwnym razie program kontynuuje dalsz¹ pracê  
-  if (HAL_HalfDuplex_Init(&huart3) != HAL_OK)
  8001684:	4805      	ldr	r0, [pc, #20]	; (800169c <set_baudrate+0x64>)
  8001686:	f001 ff43 	bl	8003510 <HAL_HalfDuplex_Init>
  800168a:	4603      	mov	r3, r0
  800168c:	2b00      	cmp	r3, #0
  800168e:	d001      	beq.n	8001694 <set_baudrate+0x5c>
-  {
-    Error_Handler();
  8001690:	f7ff fd77 	bl	8001182 <Error_Handler>
-  }
-}
  8001694:	bf00      	nop
  8001696:	3708      	adds	r7, #8
  8001698:	46bd      	mov	sp, r7
@@ -2948,51 +2844,33 @@ static void set_baudrate(uint32_t baudrate)
  80016a0:	40004800 	.word	0x40004800
 
 080016a4 <wire_reset>:
-
-
-HAL_StatusTypeDef wire_reset(void)
-{
  80016a4:	b580      	push	{r7, lr}
  80016a6:	b082      	sub	sp, #8
  80016a8:	af00      	add	r7, sp, #0
-  uint8_t data_out = 0xF0; //zmienna przechowuj¹ca to co zostanie przes³ane przez UART (ni¿sze cztery bity maj¹ wartoœæ 0, wy¿sze - 1)
  80016aa:	23f0      	movs	r3, #240	; 0xf0
  80016ac:	71fb      	strb	r3, [r7, #7]
-  uint8_t data_in = 0; //zmienna przechowuj¹ca to co czujnik ds18b20 zinterpetuje jako sygna³ reset
  80016ae:	2300      	movs	r3, #0
  80016b0:	71bb      	strb	r3, [r7, #6]
-
-  set_baudrate(9600); //wysy³anie sygna³u z prêdkoœci¹ 9600 bitów na sekundê przez UART
  80016b2:	f44f 5016 	mov.w	r0, #9600	; 0x2580
  80016b6:	f7ff ffbf 	bl	8001638 <set_baudrate>
-  HAL_UART_Transmit(&huart3, &data_out, 1, HAL_MAX_DELAY);
  80016ba:	1df9      	adds	r1, r7, #7
  80016bc:	f04f 33ff 	mov.w	r3, #4294967295
  80016c0:	2201      	movs	r2, #1
  80016c2:	480c      	ldr	r0, [pc, #48]	; (80016f4 <wire_reset+0x50>)
  80016c4:	f001 ff7a 	bl	80035bc <HAL_UART_Transmit>
-  HAL_UART_Receive(&huart3, &data_in, 1, HAL_MAX_DELAY);
  80016c8:	1db9      	adds	r1, r7, #6
  80016ca:	f04f 33ff 	mov.w	r3, #4294967295
  80016ce:	2201      	movs	r2, #1
  80016d0:	4808      	ldr	r0, [pc, #32]	; (80016f4 <wire_reset+0x50>)
  80016d2:	f002 f807 	bl	80036e4 <HAL_UART_Receive>
-  set_baudrate(115200); //przy tej prêdkoœci bitów na sekundê UART generuje przebiegi pasuj¹ce do transmisji przez 1-wire bitów o wartoœci 0 i 1 
  80016d6:	f44f 30e1 	mov.w	r0, #115200	; 0x1c200
  80016da:	f7ff ffad 	bl	8001638 <set_baudrate>
-
-  //jeœli uzyskana zosta³a odpowiedŸ od czujnika zwracana jest wartoœæ HAL_OK, w przeciwnym razie zwracana jest wartoœæ HAL_ERROR
-  if (data_in != 0xF0)
  80016de:	79bb      	ldrb	r3, [r7, #6]
  80016e0:	2bf0      	cmp	r3, #240	; 0xf0
  80016e2:	d001      	beq.n	80016e8 <wire_reset+0x44>
-    return HAL_OK;
  80016e4:	2300      	movs	r3, #0
  80016e6:	e000      	b.n	80016ea <wire_reset+0x46>
-  else
-    return HAL_ERROR;
  80016e8:	2301      	movs	r3, #1
-}
  80016ea:	4618      	mov	r0, r3
  80016ec:	3708      	adds	r7, #8
  80016ee:	46bd      	mov	sp, r7
@@ -3001,35 +2879,25 @@ HAL_StatusTypeDef wire_reset(void)
  80016f4:	200000e8 	.word	0x200000e8
 
 080016f8 <read_bit>:
-
-static int read_bit(void)
-{
  80016f8:	b580      	push	{r7, lr}
  80016fa:	b082      	sub	sp, #8
  80016fc:	af00      	add	r7, sp, #0
-  uint8_t data_out = 0xFF; //zmienna przechowuj¹ca to co zostanie przes³ane przez UART (ni¿sze cztery bity maj¹ wartoœæ 0, wy¿sze - 1)
  80016fe:	23ff      	movs	r3, #255	; 0xff
  8001700:	71fb      	strb	r3, [r7, #7]
-  uint8_t data_in = 0;  //zmienna przechowuj¹ca to co czujnik ds18b20 zinterpetuje jako sygna³ reset
  8001702:	2300      	movs	r3, #0
  8001704:	71bb      	strb	r3, [r7, #6]
-  HAL_UART_Transmit(&huart3, &data_out, 1, HAL_MAX_DELAY);
  8001706:	1df9      	adds	r1, r7, #7
  8001708:	f04f 33ff 	mov.w	r3, #4294967295
  800170c:	2201      	movs	r2, #1
  800170e:	4808      	ldr	r0, [pc, #32]	; (8001730 <read_bit+0x38>)
  8001710:	f001 ff54 	bl	80035bc <HAL_UART_Transmit>
-  HAL_UART_Receive(&huart3, &data_in, 1, HAL_MAX_DELAY);
  8001714:	1db9      	adds	r1, r7, #6
  8001716:	f04f 33ff 	mov.w	r3, #4294967295
  800171a:	2201      	movs	r2, #1
  800171c:	4804      	ldr	r0, [pc, #16]	; (8001730 <read_bit+0x38>)
  800171e:	f001 ffe1 	bl	80036e4 <HAL_UART_Receive>
-
-  return data_in & 0x01;
  8001722:	79bb      	ldrb	r3, [r7, #6]
  8001724:	f003 0301 	and.w	r3, r3, #1
-}
  8001728:	4618      	mov	r0, r3
  800172a:	3708      	adds	r7, #8
  800172c:	46bd      	mov	sp, r7
@@ -3037,44 +2905,31 @@ static int read_bit(void)
  8001730:	200000e8 	.word	0x200000e8
 
 08001734 <wire_read>:
-
-uint8_t wire_read(void)
-{
  8001734:	b580      	push	{r7, lr}
  8001736:	b082      	sub	sp, #8
  8001738:	af00      	add	r7, sp, #0
-  uint8_t value = 0; //zmienna, która przechowa odczytany bajt 
  800173a:	2300      	movs	r3, #0
  800173c:	71fb      	strb	r3, [r7, #7]
-  int i; // zmienna umo¿liwiaj¹ca zakoñczenie dzia³ania pêtli
-  for (i = 0; i < 8; i++) {
  800173e:	2300      	movs	r3, #0
  8001740:	603b      	str	r3, [r7, #0]
  8001742:	e00e      	b.n	8001762 <wire_read+0x2e>
-    value >>= 1; //przesuniêcie siê o jeden bit w prawo
  8001744:	79fb      	ldrb	r3, [r7, #7]
  8001746:	085b      	lsrs	r3, r3, #1
  8001748:	71fb      	strb	r3, [r7, #7]
-    if (read_bit())
  800174a:	f7ff ffd5 	bl	80016f8 <read_bit>
  800174e:	4603      	mov	r3, r0
  8001750:	2b00      	cmp	r3, #0
  8001752:	d003      	beq.n	800175c <wire_read+0x28>
-      value |= 0x80; //jeœli na danym bicie nie znajduje siê 1, wtedy nastêpuje ustawienie 1 na ósmym bicie, w przeciwnym razie nic siê nie dzieje 
  8001754:	79fb      	ldrb	r3, [r7, #7]
  8001756:	f063 037f 	orn	r3, r3, #127	; 0x7f
  800175a:	71fb      	strb	r3, [r7, #7]
-  for (i = 0; i < 8; i++) {
  800175c:	683b      	ldr	r3, [r7, #0]
  800175e:	3301      	adds	r3, #1
  8001760:	603b      	str	r3, [r7, #0]
  8001762:	683b      	ldr	r3, [r7, #0]
  8001764:	2b07      	cmp	r3, #7
  8001766:	dded      	ble.n	8001744 <wire_read+0x10>
-  }
-  return value;
  8001768:	79fb      	ldrb	r3, [r7, #7]
-}
  800176a:	4618      	mov	r0, r3
  800176c:	3708      	adds	r7, #8
  800176e:	46bd      	mov	sp, r7
@@ -3082,42 +2937,28 @@ uint8_t wire_read(void)
 	...
 
 08001774 <write_bit>:
-
-static void write_bit(int value)
-{
  8001774:	b580      	push	{r7, lr}
  8001776:	b084      	sub	sp, #16
  8001778:	af00      	add	r7, sp, #0
  800177a:	6078      	str	r0, [r7, #4]
-  if (value) {
  800177c:	687b      	ldr	r3, [r7, #4]
  800177e:	2b00      	cmp	r3, #0
  8001780:	d00a      	beq.n	8001798 <write_bit+0x24>
-      uint8_t data_out = 0xff;//zmienna przechowuj¹ca to co zostanie przes³ane przez UART
  8001782:	23ff      	movs	r3, #255	; 0xff
  8001784:	73fb      	strb	r3, [r7, #15]
-    HAL_UART_Transmit(&huart3, &data_out, 1, HAL_MAX_DELAY);
  8001786:	f107 010f 	add.w	r1, r7, #15
  800178a:	f04f 33ff 	mov.w	r3, #4294967295
  800178e:	2201      	movs	r2, #1
  8001790:	4808      	ldr	r0, [pc, #32]	; (80017b4 <write_bit+0x40>)
  8001792:	f001 ff13 	bl	80035bc <HAL_UART_Transmit>
-  } else {
-      uint8_t data_out = 0x0;//zmienna przechowuj¹ca to co zostanie przes³ane przez UART
-    HAL_UART_Transmit(&huart3, &data_out, 1, HAL_MAX_DELAY);
-  }
-}
  8001796:	e009      	b.n	80017ac <write_bit+0x38>
-      uint8_t data_out = 0x0;//zmienna przechowuj¹ca to co zostanie przes³ane przez UART
  8001798:	2300      	movs	r3, #0
  800179a:	73bb      	strb	r3, [r7, #14]
-    HAL_UART_Transmit(&huart3, &data_out, 1, HAL_MAX_DELAY);
  800179c:	f107 010e 	add.w	r1, r7, #14
  80017a0:	f04f 33ff 	mov.w	r3, #4294967295
  80017a4:	2201      	movs	r2, #1
  80017a6:	4803      	ldr	r0, [pc, #12]	; (80017b4 <write_bit+0x40>)
  80017a8:	f001 ff08 	bl	80035bc <HAL_UART_Transmit>
-}
  80017ac:	bf00      	nop
  80017ae:	3710      	adds	r7, #16
  80017b0:	46bd      	mov	sp, r7
@@ -3125,37 +2966,27 @@ static void write_bit(int value)
  80017b4:	200000e8 	.word	0x200000e8
 
 080017b8 <wire_write>:
-
-void wire_write(uint8_t byte)
-{
  80017b8:	b580      	push	{r7, lr}
  80017ba:	b084      	sub	sp, #16
  80017bc:	af00      	add	r7, sp, #0
  80017be:	4603      	mov	r3, r0
  80017c0:	71fb      	strb	r3, [r7, #7]
-  int i; // zmienna umo¿liwiaj¹ca zakoñczenie dzia³ania pêtli
-  for (i = 0; i < 8; i++) {
  80017c2:	2300      	movs	r3, #0
  80017c4:	60fb      	str	r3, [r7, #12]
  80017c6:	e00b      	b.n	80017e0 <wire_write+0x28>
-    write_bit(byte & 0x01); //zapisywanie pojedynczych bitów 
  80017c8:	79fb      	ldrb	r3, [r7, #7]
  80017ca:	f003 0301 	and.w	r3, r3, #1
  80017ce:	4618      	mov	r0, r3
  80017d0:	f7ff ffd0 	bl	8001774 <write_bit>
-    byte >>= 1; //przesuniêcie siê o jeden bit w prawo
  80017d4:	79fb      	ldrb	r3, [r7, #7]
  80017d6:	085b      	lsrs	r3, r3, #1
  80017d8:	71fb      	strb	r3, [r7, #7]
-  for (i = 0; i < 8; i++) {
  80017da:	68fb      	ldr	r3, [r7, #12]
  80017dc:	3301      	adds	r3, #1
  80017de:	60fb      	str	r3, [r7, #12]
  80017e0:	68fb      	ldr	r3, [r7, #12]
  80017e2:	2b07      	cmp	r3, #7
  80017e4:	ddf0      	ble.n	80017c8 <wire_write+0x10>
-  }
-}
  80017e6:	bf00      	nop
  80017e8:	bf00      	nop
  80017ea:	3710      	adds	r7, #16
@@ -3163,9 +2994,6 @@ void wire_write(uint8_t byte)
  80017ee:	bd80      	pop	{r7, pc}
 
 080017f0 <byte_crc>:
-
-static uint8_t byte_crc(uint8_t crc, uint8_t byte)
-{
  80017f0:	b480      	push	{r7}
  80017f2:	b085      	sub	sp, #20
  80017f4:	af00      	add	r7, sp, #0
@@ -3174,45 +3002,34 @@ static uint8_t byte_crc(uint8_t crc, uint8_t byte)
  80017fa:	71fb      	strb	r3, [r7, #7]
  80017fc:	4613      	mov	r3, r2
  80017fe:	71bb      	strb	r3, [r7, #6]
-  int i; // zmienna umo¿liwiaj¹ca zakoñczenie dzia³ania pêtli
-  for (i = 0; i < 8; i++) {
  8001800:	2300      	movs	r3, #0
  8001802:	60fb      	str	r3, [r7, #12]
  8001804:	e016      	b.n	8001834 <byte_crc+0x44>
-    uint8_t b = crc ^ byte; //jeœli poszczególne bity w zmiennej crc oraz byte s¹ sobie równe, to w  miennej b na odpowiedniej pozycji pojawia siê 1, w przeciwym przypadku 0
  8001806:	79fa      	ldrb	r2, [r7, #7]
  8001808:	79bb      	ldrb	r3, [r7, #6]
  800180a:	4053      	eors	r3, r2
  800180c:	72fb      	strb	r3, [r7, #11]
-    crc >>= 1;  //przesuniêcie siê o jeden bit w prawo
  800180e:	79fb      	ldrb	r3, [r7, #7]
  8001810:	085b      	lsrs	r3, r3, #1
  8001812:	71fb      	strb	r3, [r7, #7]
-    if (b & 0x01)
  8001814:	7afb      	ldrb	r3, [r7, #11]
  8001816:	f003 0301 	and.w	r3, r3, #1
  800181a:	2b00      	cmp	r3, #0
  800181c:	d004      	beq.n	8001828 <byte_crc+0x38>
-      crc ^= 0x8c; //ta sama sytacja jak w przypadku przypisania wartoœci do zmiennej b
  800181e:	79fb      	ldrb	r3, [r7, #7]
  8001820:	f083 0373 	eor.w	r3, r3, #115	; 0x73
  8001824:	43db      	mvns	r3, r3
  8001826:	71fb      	strb	r3, [r7, #7]
-    byte >>= 1;  //przesuniêcie siê o jeden bit w prawo
  8001828:	79bb      	ldrb	r3, [r7, #6]
  800182a:	085b      	lsrs	r3, r3, #1
  800182c:	71bb      	strb	r3, [r7, #6]
-  for (i = 0; i < 8; i++) {
  800182e:	68fb      	ldr	r3, [r7, #12]
  8001830:	3301      	adds	r3, #1
  8001832:	60fb      	str	r3, [r7, #12]
  8001834:	68fb      	ldr	r3, [r7, #12]
  8001836:	2b07      	cmp	r3, #7
  8001838:	dde5      	ble.n	8001806 <byte_crc+0x16>
-  }
-  return crc;
  800183a:	79fb      	ldrb	r3, [r7, #7]
-}
  800183c:	4618      	mov	r0, r3
  800183e:	3714      	adds	r7, #20
  8001840:	46bd      	mov	sp, r7
@@ -3220,24 +3037,16 @@ static uint8_t byte_crc(uint8_t crc, uint8_t byte)
  8001846:	4770      	bx	lr
 
 08001848 <wire_crc>:
-
-uint8_t wire_crc(const uint8_t* data, int len)
-{
  8001848:	b580      	push	{r7, lr}
  800184a:	b084      	sub	sp, #16
  800184c:	af00      	add	r7, sp, #0
  800184e:	6078      	str	r0, [r7, #4]
  8001850:	6039      	str	r1, [r7, #0]
-   int i; // zmienna, która umo¿liwia zakoñczenie dzia³ania pêtli oraz przesuwanie siê po kolejnych elementach bloku o nazwie data
-   uint8_t crc = 0; //zmiennna przechowuj¹ca wartoœci zwracane z funkcji byte_crc
  8001852:	2300      	movs	r3, #0
  8001854:	72fb      	strb	r3, [r7, #11]
-   
-   for (i = 0; i < len; i++)    //pêtla przechodz¹ca po kolejnych elementach bloku danych
  8001856:	2300      	movs	r3, #0
  8001858:	60fb      	str	r3, [r7, #12]
  800185a:	e00d      	b.n	8001878 <wire_crc+0x30>
-     crc = byte_crc(crc, data[i]); //zapisanie wartoœci zwracanej z funkcji byte_crc do zmiennej crc 
  800185c:	68fb      	ldr	r3, [r7, #12]
  800185e:	687a      	ldr	r2, [r7, #4]
  8001860:	4413      	add	r3, r2
@@ -3248,7 +3057,6 @@ uint8_t wire_crc(const uint8_t* data, int len)
  800186a:	f7ff ffc1 	bl	80017f0 <byte_crc>
  800186e:	4603      	mov	r3, r0
  8001870:	72fb      	strb	r3, [r7, #11]
-   for (i = 0; i < len; i++)    //pêtla przechodz¹ca po kolejnych elementach bloku danych
  8001872:	68fb      	ldr	r3, [r7, #12]
  8001874:	3301      	adds	r3, #1
  8001876:	60fb      	str	r3, [r7, #12]
@@ -3256,10 +3064,7 @@ uint8_t wire_crc(const uint8_t* data, int len)
  800187a:	683b      	ldr	r3, [r7, #0]
  800187c:	429a      	cmp	r2, r3
  800187e:	dbed      	blt.n	800185c <wire_crc+0x14>
-
-   return crc;
  8001880:	7afb      	ldrb	r3, [r7, #11]
-}
  8001882:	4618      	mov	r0, r3
  8001884:	3710      	adds	r7, #16
  8001886:	46bd      	mov	sp, r7

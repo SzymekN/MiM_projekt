@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := lcd
+BUILD_ARTIFACT_NAME := Nowak_Matusiak_MiM_projekt
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-lcd.elf \
+Nowak_Matusiak_MiM_projekt.elf \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-lcd.list \
+Nowak_Matusiak_MiM_projekt.list \
 
 OBJCOPY_BIN += \
-lcd.bin \
+Nowak_Matusiak_MiM_projekt.bin \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: lcd.elf secondary-outputs
+main-build: Nowak_Matusiak_MiM_projekt.elf secondary-outputs
 
 # Tool invocations
-lcd.elf: $(OBJS) $(USER_OBJS) D:\Studia\Semestr\ III\MiM\cube\lcd\STM32F334R8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "lcd.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Studia\Semestr III\MiM\cube\lcd\STM32F334R8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="lcd.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Nowak_Matusiak_MiM_projekt.elf: $(OBJS) $(USER_OBJS) D:\Studia\Semestr\ III\MiM\cube\lcd\STM32F334R8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Nowak_Matusiak_MiM_projekt.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Studia\Semestr III\MiM\cube\lcd\STM32F334R8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Nowak_Matusiak_MiM_projekt.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,19 +70,19 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-lcd.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "lcd.list"
+Nowak_Matusiak_MiM_projekt.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Nowak_Matusiak_MiM_projekt.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-lcd.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "lcd.bin"
+Nowak_Matusiak_MiM_projekt.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Nowak_Matusiak_MiM_projekt.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout lcd.bin lcd.elf lcd.list
+	-$(RM) Nowak_Matusiak_MiM_projekt.bin Nowak_Matusiak_MiM_projekt.elf Nowak_Matusiak_MiM_projekt.list default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
